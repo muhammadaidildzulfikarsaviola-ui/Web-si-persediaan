@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f7f4">
+    <meta name="description" content="Sistem informasi persediaan sederhana untuk pembelajaran HTML, CSS, dan JavaScript tanpa database.">
+    <title>Transaksi — Ruang Stok</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="index.html" data-page="dashboard" aria-label="Ruang Stok beranda">
+          <span class="brand-mark">
+            <span>
+            </span>
+            <span>
+            </span>
+            <span>
+            </span>
+            <span>
+            </span>
+          </span>
+          <span class="brand-copy">
+            <strong>ruang<span>stok</span>
+            </strong>
+            <small>INVENTORY WORKSPACE</small>
+          </span>
+        </a>
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="nav-list" aria-label="Navigasi utama">
+          <a class="nav-item" href="index.html" data-page="dashboard">
+            <span class="nav-icon">▦</span>Ringkasan <span class="nav-arrow">↗</span>
+          </a>
+          <a class="nav-item" href="barang.html" data-page="products">
+            <span class="nav-icon">▤</span>Data barang <span class="nav-count" id="navProductCount">0</span>
+          </a>
+          <a class="nav-item active" href="transaksi.html" data-page="transactions">
+            <span class="nav-icon">⇄</span>Transaksi</a>
+          <a class="nav-item" href="laporan.html" data-page="reports">
+            <span class="nav-icon">▥</span>Laporan</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="demo-note">
+            <span class="demo-dot">
+            </span>
+            <div>
+              <strong>Mode pembelajaran</strong>
+              <small>Data tersimpan di browser ini.</small>
+            </div>
+          </div>
+          <button class="nav-item" data-action="reset">
+            <span class="nav-icon">↻</span>Reset data demo</button>
+          <div class="profile">
+            <div class="avatar">AD</div>
+            <div class="profile-copy">
+              <strong>Admin Gudang</strong>
+              <small>Pengelola persediaan</small>
+            </div>
+            <span class="profile-menu">•••</span>
+          </div>
+        </div>
+      </aside>
+      <main class="main-area">
+        <header class="topbar">
+          <button class="mobile-menu" id="mobileMenu" aria-label="Buka menu">☰</button>
+          <div class="breadcrumbs">
+            <span>Workspace</span>
+            <span class="crumb-slash">/</span>
+            <strong id="breadcrumbTitle">Transaksi</strong>
+          </div>
+          <div class="topbar-right">
+            <span class="live-status">
+              <span>
+              </span> DEMO LOKAL</span>
+              <span class="top-date" id="todayDate">
+              </span>
+            </div>
+          </header>
+          <section class="page-content" id="pageContent"></section>
+      </main>
+              </div>
+              <div class="toast-region" id="toastRegion" aria-live="polite">
+              </div>
+              <div class="modal-backdrop" id="modalBackdrop" hidden>
+                <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+                  <div class="modal-header">
+                    <div>
+                      <div class="section-kicker" id="modalKicker">FORM</div>
+                      <h2 id="modalTitle">Tambah barang</h2>
+                    </div>
+                    <button class="modal-close" id="closeModal" aria-label="Tutup">×</button>
+                  </div>
+                  <form id="modalForm">
+                    <div id="modalFields" class="modal-fields">
+                    </div>
+                    <div class="form-error" id="formError" role="alert">
+                    </div>
+                    <div class="modal-actions">
+                      <button type="button" class="button button-light" id="cancelModal">Batal</button>
+                      <button type="submit" class="button button-dark" id="submitModal">Simpan data ↗</button>
+                    </div>
+                  </form>
+                </section>
+              </div>
+              <script src="script.js">
+              </script>
+            </body>
+          </html>
