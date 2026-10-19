@@ -117,7 +117,7 @@
       }
     ]
   }
-});
+);
 let state;
 try {
   state = JSON.parse(localStorage.getItem(KEY) || "null");
