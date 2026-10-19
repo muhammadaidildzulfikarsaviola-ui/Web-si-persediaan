@@ -101,6 +101,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   gap: 5px
 }
 .nav-item {
+  text-decoration: none;
   border: 0;
   background: transparent;
   color: #b8c0b6;
