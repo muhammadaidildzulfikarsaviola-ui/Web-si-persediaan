@@ -124,7 +124,11 @@ try {
   if(! state || ! Array.isArray(state.products) || ! Array.isArray(state.transactions)) state = seed();
 } catch(e) {
   state = seed();
-} let page = "dashboard", search = "", category = "all", txType = "all", mode = "", editId = null, hideWelcome = false;
+} const pageFiles = {"dashboard":"index.html","products":"barang.html","transactions":"transaksi.html","reports":"laporan.html"};
+  const pageTitles = { dashboard: "Ringkasan", products: "Data Barang", transactions: "Transaksi", reports: "Laporan" };
+  const currentFile = location.pathname.split("/").pop() || "index.html";
+  let page = Object.keys(pageFiles).find(key => pageFiles[key] === currentFile) || "dashboard";
+  let search = "", category = "all", txType = "all", mode = "", editId = null, hideWelcome = false;
 const esc = v => String(v == null? "": v).replace(/[&<>"']/g, c => ({
   "&": "&amp;",
   "<": "&lt;",
@@ -167,26 +171,29 @@ function save() {
 } function header(kicker, title, subtitle, button, action) {
   return '<div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span>' + kicker + '</div><h1>' + title + '</h1><p class="page-subtitle">' + subtitle + '</p></div>' + (button? '<button class="button button-dark" data-action="' + action + '"><span>＋</span> ' + button + '</button>': "") + "</div>";
 } function setPage(p) {
-  page = p;
-  search = "";
-  $$(".nav-item[data-page]").forEach(b => b.classList.toggle("active", b.dataset.page === p));
-  $("#breadcrumbTitle").textContent = ({
-    dashboard: "Ringkasan",
-    products: "Data barang",
-    transactions: "Transaksi",
-    reports: "Laporan"
-  })[
-    p
-  ];
-  $("#sidebar").classList.remove("open");
-  render();
-} function render() {
-  if(page === "dashboard") dashboard();
-  if(page === "products") productsPage();
-  if(page === "transactions") transactionsPage();
-  if(page === "reports") reportsPage();
+  // Pindah ke file HTML sesuai menu yang dipilih.
+  window.location.href = pageFiles[p] || "index.html";
+}
+
+function render() {
+  // Tandai menu yang sedang dibuka.
+  $$(".nav-item[data-page]").forEach(item => {
+    item.classList.toggle("active", item.dataset.page === page);
+  });
+
+  // Sesuaikan judul kecil di bagian atas halaman.
+  $("#breadcrumbTitle").textContent = pageTitles[page] || "Ringkasan";
+
+  // Tampilkan isi halaman yang sesuai.
+  if (page === "dashboard") dashboard();
+  if (page === "products") productsPage();
+  if (page === "transactions") transactionsPage();
+  if (page === "reports") reportsPage();
+
   $("#navProductCount").textContent = state.products.length;
-} function dashboard() {
+}
+
+function dashboard() {
   const total = state.products.reduce((s, p) => s + p.stock, 0), low = state.products.filter(p => p.stock<= p.minStock), value = state.products.reduce((s, p) => s + p.stock * p.cost, 0), todayTx = state.transactions.filter(t => t.date === today).length;
   const stat = (label, val, icon, note, tone) => '<article class="stat-card"><div class="stat-top"><span class="stat-label">' + label + '</span><span class="stat-icon">' + icon + '</span></div><div class="stat-value">' + val + '</div><div class="stat-bottom"><span class="' + (tone || "") + '">' + note + '</span></div></article>';
   $("#pageContent").innerHTML = '<div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span>OVERVIEW / 01</div><h1>Persediaan, <em>terkendali.</em></h1><p class="page-subtitle">Pantau stok barang dan aktivitas gudang dalam satu tempat.</p></div><button class="button button-dark" data-action="open-transaction" data-type="in"><span>＋</span> Catat transaksi</button></div>' + (hideWelcome? "": '<div class="welcome-strip"><div class="welcome-icon">✳</div><div><strong>Selamat datang di Ruang Stok.</strong><p>Ini data simulasi untuk latihan. Tambahkan barang atau catat transaksi untuk melihat angka dan laporan berubah otomatis.</p></div><button class="strip-close" id="closeWelcome">×</button></div>') + '<div class="stats-grid">' + stat("Jenis barang", num(state.products.length), "▤", "Data terdaftar") + stat("Total unit stok", num(total), "▦", "Semua barang tersedia") + stat("Stok perlu perhatian", num(low.length), "⚑", low.length? "Perlu dicek": "Semua aman", low.length? "warning": "positive") + stat("Nilai persediaan", rupiah(value), "↗", todayTx + " transaksi hari ini") + '</div>' + '<div class="dashboard-grid"><section class="panel"><div class="panel-header"><div><div class="section-kicker">MONITORING</div><h2>Perlu perhatian</h2></div><button class="text-button" data-page="products">Semua barang ↗</button></div><div class="attention-list" id="attentionList"></div></section><section class="panel"><div class="panel-header"><div><div class="section-kicker">AKTIVITAS TERBARU</div><h2>Jejak transaksi</h2></div><button class="icon-button" data-page="transactions">↗</button></div><div class="activity-list" id="recentActivity"></div></section></div>' + '<section class="panel movement-panel"><div class="panel-header"><div><div class="section-kicker">ALUR PERSEDIAAN</div><h2>Ringkasan pergerakan</h2></div><div class="chart-legend"><span><i class="legend-in"></i>Masuk</span><span><i class="legend-out"></i>Keluar</span></div></div><div id="movementChart" class="movement-chart"></div><div class="chart-footnote">ⓘ Grafik menampilkan transaksi dalam 7 hari terakhir.</div></section>' + footer();
@@ -478,11 +485,17 @@ function save() {
   notify("Data demo dipulihkan.");
 } document.addEventListener("click", e => {
   const nav = e.target.closest("[data-page]");
-  if(nav) {
+
+  if (nav) {
+    // Link di sidebar berpindah secara normal; tombol di isi halaman diarahkan lewat setPage().
+    if (nav.tagName === "A") return;
+
     e.preventDefault();
     setPage(nav.dataset.page);
     return;
-  } const b = e.target.closest("[data-action]");
+  }
+
+  const b = e.target.closest("[data-action]");
   if(! b) return;
   const a = b.dataset.action, id = b.dataset.id;
   if(a === "add-product") openModal("add-product");
